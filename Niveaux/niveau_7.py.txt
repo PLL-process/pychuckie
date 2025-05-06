@@ -1,2 +1,2 @@
-# Niveau 7
+# Code Python du niveau 7
 print('Bienvenue au niveau 7')

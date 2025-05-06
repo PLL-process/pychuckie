@@ -1,2 +1,2 @@
-# Niveau 3
+# Code Python du niveau 3
 print('Bienvenue au niveau 3')

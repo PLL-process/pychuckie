@@ -1,2 +1,2 @@
-# Niveau 18
+# Code Python du niveau 18
 print('Bienvenue au niveau 18')

@@ -1,2 +1,2 @@
-# Niveau 21
+# Code Python du niveau 21
 print('Bienvenue au niveau 21')

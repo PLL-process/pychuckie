@@ -1,2 +1,2 @@
-# Niveau 16
+# Code Python du niveau 16
 print('Bienvenue au niveau 16')
