@@ -1,40 +1,25 @@
+
 let pyodide = null;
 
-async function loadPyodideAndRun() {
-  pyodide = await loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.23.4/full/" });
-  document.getElementById("status").textContent = "Pyodide chargé.";
+async function initPyodide() {
+  pyodide = await loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.18.1/full/" });
+  document.getElementById("output").textContent = "Pyodide prêt. Choisissez un niveau.";
 }
 
-document.getElementById("launchBtn").addEventListener("click", async () => {
-  if (!pyodide) {
-    document.getElementById("status").textContent = "Erreur : Pyodide non chargé.";
-    return;
+async function loadSelectedLevel() {
+  const selector = document.getElementById("levelSelector");
+  const level = selector.value;
+  const output = document.getElementById("output");
+  output.textContent = "Chargement de " + level + "...";
+
+  try {
+    const response = await fetch("levels/" + level);
+    const code = await response.text();
+    output.textContent = "Exécution de " + level + "...";
+    pyodide.runPython(code);
+  } catch (error) {
+    output.textContent = "Erreur : " + error;
   }
+}
 
-  const level = document.getElementById("levelSelect").value;
-  document.getElementById("status").textContent = `Lancement du niveau ${level}...`;
-
-  const pythonCode = `
-import pygame
-import asyncio
-
-pygame.init()
-screen = pygame.display.set_mode((400, 300))
-pygame.display.set_caption("PyChuckie - Niveau " + str(${level}))
-running = True
-
-async def game_loop():
-    global running
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-        pygame.display.flip()
-        await asyncio.sleep(0.016)
-
-asyncio.ensure_future(game_loop())
-  `;
-  await pyodide.runPythonAsync(pythonCode);
-});
-
-loadPyodideAndRun();
+initPyodide();

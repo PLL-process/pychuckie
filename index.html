@@ -1,48 +1,44 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>PyChuckie - Jeu éducatif Python</title>
-  <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+  <title>PyChuckie 🐣</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.18.1/full/pyodide.js"></script>
 </head>
 <body>
   <h1>Bienvenue dans <code>PyChuckie</code> 🐣</h1>
-  <p>Clique sur le bouton ci-dessous pour lancer le moteur de code éducatif Python :</p>
-
-  <label for="levelSelect">Choisir un niveau :</label>
-  <select id="levelSelect">
-    <option value="1">Niveau 1</option>
-<option value="2">Niveau 2</option>
-<option value="3">Niveau 3</option>
-<option value="4">Niveau 4</option>
-<option value="5">Niveau 5</option>
-<option value="6">Niveau 6</option>
-<option value="7">Niveau 7</option>
-<option value="8">Niveau 8</option>
-<option value="9">Niveau 9</option>
-<option value="10">Niveau 10</option>
-<option value="11">Niveau 11</option>
-<option value="12">Niveau 12</option>
-<option value="13">Niveau 13</option>
-<option value="14">Niveau 14</option>
-<option value="15">Niveau 15</option>
-<option value="16">Niveau 16</option>
-<option value="17">Niveau 17</option>
-<option value="18">Niveau 18</option>
-<option value="19">Niveau 19</option>
-<option value="20">Niveau 20</option>
-<option value="21">Niveau 21</option>
-<option value="22">Niveau 22</option>
-<option value="23">Niveau 23</option>
-<option value="24">Niveau 24</option>
-<option value="25">Niveau 25</option>
+  <p>Choisissez un niveau à charger :</p>
+  <select id="levelSelector">
+    <option value="level01.py">Niveau 1</option>
+<option value="level02.py">Niveau 2</option>
+<option value="level03.py">Niveau 3</option>
+<option value="level04.py">Niveau 4</option>
+<option value="level05.py">Niveau 5</option>
+<option value="level06.py">Niveau 6</option>
+<option value="level07.py">Niveau 7</option>
+<option value="level08.py">Niveau 8</option>
+<option value="level09.py">Niveau 9</option>
+<option value="level10.py">Niveau 10</option>
+<option value="level11.py">Niveau 11</option>
+<option value="level12.py">Niveau 12</option>
+<option value="level13.py">Niveau 13</option>
+<option value="level14.py">Niveau 14</option>
+<option value="level15.py">Niveau 15</option>
+<option value="level16.py">Niveau 16</option>
+<option value="level17.py">Niveau 17</option>
+<option value="level18.py">Niveau 18</option>
+<option value="level19.py">Niveau 19</option>
+<option value="level20.py">Niveau 20</option>
+<option value="level21.py">Niveau 21</option>
+<option value="level22.py">Niveau 22</option>
+<option value="level23.py">Niveau 23</option>
+<option value="level24.py">Niveau 24</option>
+<option value="level25.py">Niveau 25</option>
   </select>
-
-  <button id="launchBtn">Lancer le jeu</button>
-  <div id="status">Chargement de Pyodide...</div>
-  <canvas id="pygame-canvas"></canvas>
-
+  <button onclick="loadSelectedLevel()">Lancer le niveau</button>
+  <pre id="output">Chargement de Pyodide...</pre>
   <script src="main.js"></script>
 </body>
 </html>

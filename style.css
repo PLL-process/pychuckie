@@ -1,21 +1,26 @@
+
 body {
   background-color: #111;
   color: white;
   font-family: monospace;
   padding: 20px;
 }
-
-button {
-  padding: 10px 20px;
-  background-color: gold;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
+h1 {
+  color: #ffd700;
 }
-
-canvas {
-  border: 2px solid yellow;
-  display: block;
+button {
+  background-color: #ffd700;
+  border: none;
+  padding: 10px;
+  margin: 10px;
+  font-size: 1em;
+}
+select {
+  margin: 10px;
+  padding: 8px;
+}
+pre {
+  background-color: #222;
+  padding: 10px;
   margin-top: 20px;
-  background-color: black;
 }
