@@ -1,20 +1,5 @@
-body {
-    background: #111;
-    color: #eee;
-    font-family: monospace;
-    padding: 20px;
-}
-.highlight { color: yellow; }
-button {
-    background: gold;
-    border: none;
-    padding: 10px;
-    margin: 10px;
-    font-weight: bold;
-}
-pre {
-    background: #222;
-    padding: 10px;
-    margin-top: 20px;
-    overflow-x: auto;
-}
+body { background-color: #111; color: white; font-family: monospace; padding: 20px; }
+h1 { color: #ffcc00; }
+button { background: yellow; padding: 10px; margin-top: 10px; }
+pre { background: #222; padding: 10px; margin-top: 20px; white-space: pre-wrap; }
+select { padding: 5px; margin-top: 10px; }
