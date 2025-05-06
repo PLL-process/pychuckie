@@ -1,17 +1,87 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <title>PyChuckie</title>
+  <meta charset="UTF-8">
+  <title>PyChuckie - Jeu éducatif Python</title>
   <script src="https://cdn.jsdelivr.net/pyodide/v0.18.1/full/pyodide.js"></script>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: #111;
+      color: #eee;
+      font-family: monospace;
+      padding: 2em;
+    }
+    h1 {
+      color: #fff;
+      font-size: 2.5em;
+    }
+    button {
+      padding: 1em;
+      background-color: gold;
+      border: none;
+      font-size: 1.2em;
+      cursor: pointer;
+      margin-top: 1em;
+    }
+    #loading {
+      margin-top: 2em;
+      background-color: #222;
+      color: #fff;
+      padding: 1em;
+      font-size: 1.2em;
+      display: none;
+    }
+  </style>
 </head>
 <body>
-  <h1>Bienvenue dans PyChuckie 🐣</h1>
+  <h1>Bienvenue dans <code>PyChuckie</code> 🐣</h1>
   <p>Clique sur le bouton ci-dessous pour lancer le moteur de code éducatif Python :</p>
-  <button onclick="loadPyodideAndRun()">Lancer le jeu</button>
-  <pre id="output"></pre>
+  <button onclick="launchPyodide()">Lancer le jeu</button>
+  <div id="loading">Chargement de Pyodide...</div>
 
-  <script type="text/javascript" src="main.js"></script>
+  <script>
+    async function launchPyodide() {
+      document.getElementById('loading').style.display = 'block';
+      let pyodide = await loadPyodide({
+        indexURL: "https://cdn.jsdelivr.net/pyodide/v0.18.1/full/"
+      });
+
+      await pyodide.loadPackage('pygame');
+
+      let code = `
+import asyncio
+import pygame
+import platform
+
+FPS = 60
+
+def setup():
+    pygame.init()
+    pygame.display.set_mode((400, 300))
+    pygame.display.set_caption("Exemple Pygame")
+
+def update_loop():
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            return
+    pygame.display.flip()
+
+async def main():
+    setup()
+    while True:
+        update_loop()
+        await asyncio.sleep(1.0 / FPS)
+
+if platform.system() == "Emscripten":
+    asyncio.ensure_future(main())
+else:
+    asyncio.run(main())
+`;
+
+      pyodide.runPython(code);
+    }
+  </script>
 </body>
 </html>
