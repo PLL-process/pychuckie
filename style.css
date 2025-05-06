@@ -1,19 +1,21 @@
 body {
-  font-family: monospace;
   background-color: #111;
-  color: #f0f0f0;
+  color: white;
+  font-family: monospace;
   padding: 20px;
 }
+
 button {
-  background: #FFD700;
+  padding: 10px 20px;
+  background-color: gold;
   border: none;
-  padding: 10px;
-  font-size: 16px;
+  font-weight: bold;
   cursor: pointer;
-  margin-bottom: 20px;
 }
-pre {
-  background: #222;
-  padding: 10px;
-  white-space: pre-wrap;
+
+canvas {
+  border: 2px solid yellow;
+  display: block;
+  margin-top: 20px;
+  background-color: black;
 }
