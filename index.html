@@ -1,43 +1,42 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>PyChuckie 🐣</title>
-  <link rel="stylesheet" href="style.css">
+  <title>PyChuckie avec Sélection de Niveau</title>
   <script src="https://cdn.jsdelivr.net/pyodide/v0.18.1/full/pyodide.js"></script>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Bienvenue dans <code>PyChuckie</code> 🐣</h1>
-  <p>Choisissez un niveau à charger :</p>
-  <select id="levelSelector">
-    <option value="level01.py">Niveau 1</option>
-<option value="level02.py">Niveau 2</option>
-<option value="level03.py">Niveau 3</option>
-<option value="level04.py">Niveau 4</option>
-<option value="level05.py">Niveau 5</option>
-<option value="level06.py">Niveau 6</option>
-<option value="level07.py">Niveau 7</option>
-<option value="level08.py">Niveau 8</option>
-<option value="level09.py">Niveau 9</option>
-<option value="level10.py">Niveau 10</option>
-<option value="level11.py">Niveau 11</option>
-<option value="level12.py">Niveau 12</option>
-<option value="level13.py">Niveau 13</option>
-<option value="level14.py">Niveau 14</option>
-<option value="level15.py">Niveau 15</option>
-<option value="level16.py">Niveau 16</option>
-<option value="level17.py">Niveau 17</option>
-<option value="level18.py">Niveau 18</option>
-<option value="level19.py">Niveau 19</option>
-<option value="level20.py">Niveau 20</option>
-<option value="level21.py">Niveau 21</option>
-<option value="level22.py">Niveau 22</option>
-<option value="level23.py">Niveau 23</option>
-<option value="level24.py">Niveau 24</option>
-<option value="level25.py">Niveau 25</option>
+  <h1>Bienvenue dans PyChuckie 🐣</h1>
+  <p>Choisis un niveau à charger :</p>
+  <select id="levelSelect">
+    <option value="Niveaux/niveau_1.py">Niveau 1</option>
+<option value="Niveaux/niveau_2.py">Niveau 2</option>
+<option value="Niveaux/niveau_3.py">Niveau 3</option>
+<option value="Niveaux/niveau_4.py">Niveau 4</option>
+<option value="Niveaux/niveau_5.py">Niveau 5</option>
+<option value="Niveaux/niveau_6.py">Niveau 6</option>
+<option value="Niveaux/niveau_7.py">Niveau 7</option>
+<option value="Niveaux/niveau_8.py">Niveau 8</option>
+<option value="Niveaux/niveau_9.py">Niveau 9</option>
+<option value="Niveaux/niveau_10.py">Niveau 10</option>
+<option value="Niveaux/niveau_11.py">Niveau 11</option>
+<option value="Niveaux/niveau_12.py">Niveau 12</option>
+<option value="Niveaux/niveau_13.py">Niveau 13</option>
+<option value="Niveaux/niveau_14.py">Niveau 14</option>
+<option value="Niveaux/niveau_15.py">Niveau 15</option>
+<option value="Niveaux/niveau_16.py">Niveau 16</option>
+<option value="Niveaux/niveau_17.py">Niveau 17</option>
+<option value="Niveaux/niveau_18.py">Niveau 18</option>
+<option value="Niveaux/niveau_19.py">Niveau 19</option>
+<option value="Niveaux/niveau_20.py">Niveau 20</option>
+<option value="Niveaux/niveau_21.py">Niveau 21</option>
+<option value="Niveaux/niveau_22.py">Niveau 22</option>
+<option value="Niveaux/niveau_23.py">Niveau 23</option>
+<option value="Niveaux/niveau_24.py">Niveau 24</option>
+<option value="Niveaux/niveau_25.py">Niveau 25</option>
   </select>
-  <button onclick="loadSelectedLevel()">Lancer le niveau</button>
+  <button onclick="runSelectedLevel()">Lancer le niveau</button>
   <pre id="output">Chargement de Pyodide...</pre>
   <script src="main.js"></script>
 </body>
