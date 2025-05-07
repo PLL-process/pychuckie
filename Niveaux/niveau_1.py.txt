@@ -1,2 +1,44 @@
-# Code Python du niveau 1
-print('Bienvenue au niveau 1')
+import asyncio
+import platform
+import pygame
+
+# Initialisation de Pygame
+pygame.init()
+
+# Constantes
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+FPS = 60
+
+# Création de la fenêtre
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("PyChuckie - Niveau 1")
+
+def setup():
+    """Prépare le jeu pour le premier niveau"""
+    pass  # Rien à configurer pour l'instant
+
+def update_loop():
+    """Met à jour l'état du jeu à chaque frame"""
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            return
+    
+    # Remplir l'écran avec une couleur noire
+    screen.fill((0, 0, 0))
+    pygame.display.flip()
+
+async def main():
+    setup()
+    running = True
+    while running:
+        update_loop()
+        await asyncio.sleep(1.0 / FPS)  # Contrôle du taux de rafraîchissement
+
+# Exécution adaptée à Pyodide ou au bureau
+if platform.system() == "Emscripten":
+    asyncio.ensure_future(main())
+else:
+    if __name__ == "__main__":
+        asyncio.run(main())
