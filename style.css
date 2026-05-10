@@ -1,5 +1,123 @@
-body { background-color: #111; color: white; font-family: monospace; padding: 20px; }
-h1 { color: #ffcc00; }
-button { background: yellow; padding: 10px; margin-top: 10px; }
-pre { background: #222; padding: 10px; margin-top: 20px; white-space: pre-wrap; }
-select { padding: 5px; margin-top: 10px; }
+/* Définit les couleurs globales de l'application. */
+:root {
+  --fond: #0f172a;
+  --panel: #111827;
+  --texte: #f8fafc;
+  --accent: #facc15;
+  --accent2: #38bdf8;
+}
+
+/* Mise en forme générale de la page. */
+body {
+  margin: 0;
+  background: linear-gradient(180deg, #020617, #0f172a);
+  color: var(--texte);
+  font-family: Verdana, sans-serif;
+}
+
+/* Conteneur principal centré. */
+.app {
+  max-width: 1400px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* Bandeau de présentation. */
+.hero {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Titre principal. */
+.hero h1 {
+  color: var(--accent);
+}
+
+/* Badge d'information. */
+.badge {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: #1e293b;
+  border: 1px solid #334155;
+}
+
+/* Mise en page en colonnes. */
+.workspace {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* Cartes visuelles. */
+.panel {
+  background: rgba(17, 24, 39, 0.95);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.4);
+}
+
+/* Zone de mission. */
+.mission {
+  background: #082f49;
+  border-left: 5px solid var(--accent2);
+  padding: 12px;
+  margin-top: 10px;
+  margin-bottom: 15px;
+}
+
+/* Zone de jeu. */
+canvas {
+  width: 100%;
+  border-radius: 12px;
+  border: 2px solid #334155;
+  background: #020617;
+}
+
+/* Zone de code Python. */
+textarea {
+  width: 100%;
+  height: 320px;
+  background: #020617;
+  color: #f8fafc;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  padding: 10px;
+  font-family: Consolas, monospace;
+  font-size: 15px;
+}
+
+/* Boutons de l'application. */
+button {
+  margin-top: 10px;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  background: var(--accent);
+  color: #000;
+  font-weight: bold;
+}
+
+/* Alignement des boutons. */
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* Console de sortie. */
+pre {
+  background: #020617;
+  border: 1px solid #334155;
+  padding: 10px;
+  border-radius: 10px;
+  min-height: 120px;
+  overflow-x: auto;
+}
+
+/* Adaptation mobile et tablette. */
+@media (max-width: 1000px) {
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+}
