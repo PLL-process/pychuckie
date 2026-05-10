@@ -1,26 +1,26 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <!-- Définit l'encodage pour afficher correctement les accents. -->
+  <!-- Definit l'encodage pour afficher correctement les accents. -->
   <meta charset="UTF-8">
   <!-- Rend la page lisible sur ordinateur, tablette et smartphone. -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Titre affiché dans l'onglet du navigateur. -->
-  <title>PyChuckie — Python Quest</title>
-  <!-- Charge Pyodide pour exécuter Python directement dans le navigateur. -->
+  <!-- Titre affiche dans l'onglet du navigateur. -->
+  <title>PyChuckie - L'Odyssee du Code</title>
+  <!-- Charge Pyodide pour executer Python directement dans le navigateur. -->
   <script src="https://cdn.jsdelivr.net/pyodide/v0.29.0/full/pyodide.js"></script>
   <!-- Charge la feuille de style principale. -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Conteneur général de l'application. -->
+  <!-- Conteneur general de l'application. -->
   <main class="app">
-    <!-- En-tête pédagogique de l'application. -->
+    <!-- En-tete pedagogique de l'application. -->
     <header class="hero">
       <!-- Titre principal du projet. -->
-      <h1>🐣 PyChuckie — Python Quest</h1>
-      <!-- Sous-titre qui explique l'objectif aux élèves. -->
-      <p>Programme le héros avec Python, récupère l'œuf, puis valide chaque défi.</p>
+      <h1>🐣 PyChuckie - L'Odyssee du Code</h1>
+      <!-- Sous-titre qui explique l'objectif aux eleves. -->
+      <p>Joue avec Tolkaze, observe le parcours, puis programme-le en Python pour recuperer les oeufs.</p>
       <!-- Badge de fonctionnement sans installation locale. -->
       <span class="badge">Python dans le navigateur avec Pyodide</span>
     </header>
@@ -29,31 +29,31 @@
     <section class="workspace">
       <!-- Colonne gauche : jeu et consignes. -->
       <section class="panel">
-        <!-- Sélecteur de niveau. -->
+        <!-- Selecteur de niveau. -->
         <label for="levelSelect">Choisir un niveau</label>
-        <!-- Liste des défis proposés. -->
+        <!-- Liste des defis proposes. -->
         <select id="levelSelect"></select>
         <!-- Carte de consigne du niveau. -->
         <article id="mission" class="mission"></article>
         <!-- Zone graphique du jeu. -->
         <canvas id="gameCanvas" width="640" height="400" aria-label="Zone de jeu PyChuckie"></canvas>
-        <!-- Boutons de contrôle du jeu. -->
+        <!-- Boutons de controle du jeu. -->
         <div class="actions">
-          <!-- Bouton pour réinitialiser le niveau. -->
-          <button id="resetButton" type="button">Réinitialiser</button>
+          <!-- Bouton pour reinitialiser le niveau. -->
+          <button id="resetButton" type="button">Reinitialiser</button>
           <!-- Bouton pour afficher une aide. -->
           <button id="hintButton" type="button">Indice</button>
         </div>
       </section>
 
-      <!-- Colonne droite : éditeur et sortie console. -->
+      <!-- Colonne droite : editeur et sortie console. -->
       <section class="panel editor-panel">
         <!-- Titre de la zone de code. -->
-        <h2>Éditeur Python</h2>
-        <!-- Zone dans laquelle l'élève écrit son code Python. -->
+        <h2>Editeur Python</h2>
+        <!-- Zone dans laquelle l'eleve ecrit son code Python. -->
         <textarea id="codeEditor" spellcheck="false"></textarea>
-        <!-- Bouton d'exécution du programme de l'élève. -->
-        <button id="runButton" type="button">▶ Exécuter le code</button>
+        <!-- Bouton d'execution du programme de l'eleve. -->
+        <button id="runButton" type="button">▶ Executer le code</button>
         <!-- Zone de sortie du programme. -->
         <pre id="output">Chargement de Python...</pre>
       </section>
