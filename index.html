@@ -1,348 +1,66 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PyChuckie - Apprenez Python en Ligne</title>
-    <script src="https://cdn.jsdelivr.net/pyodide/v0.18.1/full/pyodide.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        #game-container {
-            width: 800px;
-            height: 600px;
-            border: 2px solid black;
-            background-color: #000;
-            margin-bottom: 20px;
-        }
-        #editor-container {
-            width: 800px;
-            display: flex;
-            flex-direction: column;
-        }
-        #code-editor {
-            width: 100%;
-            height: 200px;
-            border: 1px solid #ccc;
-            padding: 10px;
-            font-family: monospace;
-            font-size: 14px;
-            resize: none;
-            background-color: #fff;
-        }
-        #output {
-            width: 100%;
-            height: 100px;
-            border: 1px solid #ccc;
-            padding: 10px;
-            overflow-y: scroll;
-            background-color: #f0f0f0;
-            font-family: monospace;
-            margin-top: 10px;
-        }
-        #run-button {
-            margin-top: 10px;
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            align-self: flex-start;
-        }
-        #run-button:hover {
-            background-color: #45a049;
-        }
-        #level-selector {
-            margin-bottom: 20px;
-            padding: 5px;
-            font-size: 16px;
-        }
-        #instructions {
-            width: 800px;
-            padding: 15px;
-            background-color: #e0f7fa;
-            border: 1px solid #b2ebf2;
-            margin-bottom: 20px;
-            border-radius: 5px;
-        }
-        pre {
-            background-color: #f5f5f5;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 3px;
-        }
-    </style>
+  <!-- Définit l'encodage pour afficher correctement les accents. -->
+  <meta charset="UTF-8">
+  <!-- Rend la page lisible sur ordinateur, tablette et smartphone. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Titre affiché dans l'onglet du navigateur. -->
+  <title>PyChuckie — Python Quest</title>
+  <!-- Charge Pyodide pour exécuter Python directement dans le navigateur. -->
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.29.0/full/pyodide.js"></script>
+  <!-- Charge la feuille de style principale. -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>PyChuckie - Apprenez Python en Ligne</h1>
-    <select id="level-selector">
-        <option value="1">Niveau 1 - Mouvement de Base</option>
-        <option value="2">Niveau 2 - Variables</option>
-        <option value="3">Niveau 3 - Conditions</option>
-        <option value="4">Niveau 4 - Boucles While</option>
-        <option value="5">Niveau 5 - Boucles For</option>
-        <option value="6">Niveau 6 - Boucles Imbriquées</option>
-        <option value="7">Niveau 7 - Fonctions Simples</option>
-        <option value="8">Niveau 8 - Fonctions avec Paramètres</option>
-        <option value="9">Niveau 9 - Listes</option>
-        <option value="10">Niveau 10 - Dictionnaires</option>
-        <option value="11">Niveau 11 - Entrées Clavier</option>
-        <option value="12">Niveau 12 - Conditions Composées</option>
-        <option value="13">Niveau 13 - Détection de Collisions</option>
-        <option value="14">Niveau 14 - Tests de Code</option>
-        <option value="15">Niveau 15 - Gestion des Erreurs</option>
-        <option value="16">Niveau 16 - Indentation</option>
-        <option value="17">Niveau 17 - Classes et Objets</option>
-        <option value="18">Niveau 18 - Travail Collaboratif</option>
-        <option value="19">Niveau 19 - Optimisation</option>
-        <option value="20">Niveau 20 - Stratégies Complexes</option>
-        <option value="21">Niveau 21 - Plusieurs Fichiers</option>
-        <option value="22">Niveau 22 - Documentation</option>
-        <option value="23">Niveau 23 - Créer un Niveau</option>
-        <option value="24">Niveau 24 - Sécurité</option>
-        <option value="25">Niveau 25 - Projet Final</option>
-    </select>
-    <div id="instructions"></div>
-    <div id="game-container"></div>
-    <div id="editor-container">
-        <textarea id="code-editor" placeholder="Écrivez votre code Python ici..."></textarea>
-        <button id="run-button">Exécuter le Code</button>
-        <div id="output">Les résultats et messages apparaîtront ici.</div>
-    </div>
+  <!-- Conteneur général de l'application. -->
+  <main class="app">
+    <!-- En-tête pédagogique de l'application. -->
+    <header class="hero">
+      <!-- Titre principal du projet. -->
+      <h1>🐣 PyChuckie — Python Quest</h1>
+      <!-- Sous-titre qui explique l'objectif aux élèves. -->
+      <p>Programme le héros avec Python, récupère l'œuf, puis valide chaque défi.</p>
+      <!-- Badge de fonctionnement sans installation locale. -->
+      <span class="badge">Python dans le navigateur avec Pyodide</span>
+    </header>
 
-    <script type="text/javascript">
-        async function loadPyodideAndRunGame() {
-            let pyodide = await loadPyodide({
-                indexURL: "https://cdn.jsdelivr.net/pyodide/v0.18.1/full/"
-            });
-            await pyodide.loadPackage(['pygame']);
+    <!-- Zone principale en deux colonnes. -->
+    <section class="workspace">
+      <!-- Colonne gauche : jeu et consignes. -->
+      <section class="panel">
+        <!-- Sélecteur de niveau. -->
+        <label for="levelSelect">Choisir un niveau</label>
+        <!-- Liste des défis proposés. -->
+        <select id="levelSelect"></select>
+        <!-- Carte de consigne du niveau. -->
+        <article id="mission" class="mission"></article>
+        <!-- Zone graphique du jeu. -->
+        <canvas id="gameCanvas" width="640" height="400" aria-label="Zone de jeu PyChuckie"></canvas>
+        <!-- Boutons de contrôle du jeu. -->
+        <div class="actions">
+          <!-- Bouton pour réinitialiser le niveau. -->
+          <button id="resetButton" type="button">Réinitialiser</button>
+          <!-- Bouton pour afficher une aide. -->
+          <button id="hintButton" type="button">Indice</button>
+        </div>
+      </section>
 
-            // Code du jeu PyChuckie
-            let gameCode = `
-import pygame
-import asyncio
-import platform
+      <!-- Colonne droite : éditeur et sortie console. -->
+      <section class="panel editor-panel">
+        <!-- Titre de la zone de code. -->
+        <h2>Éditeur Python</h2>
+        <!-- Zone dans laquelle l'élève écrit son code Python. -->
+        <textarea id="codeEditor" spellcheck="false"></textarea>
+        <!-- Bouton d'exécution du programme de l'élève. -->
+        <button id="runButton" type="button">▶ Exécuter le code</button>
+        <!-- Zone de sortie du programme. -->
+        <pre id="output">Chargement de Python...</pre>
+      </section>
+    </section>
+  </main>
 
-# Initialisation de Pygame
-pygame.init()
-
-# Constantes du jeu
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-GRID_SIZE = 40
-FPS = 60
-
-# Couleurs
-BLACK = (0, 0, 0)
-YELLOW = (255, 255, 0)
-GREEN = (0, 255, 0)
-RED = (255, 0, 0)
-BLUE = (0, 0, 255)
-
-# Variables globales
-level_completed = False
-
-# Classe Hero
-class Hero:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.speed = GRID_SIZE
-        self.health = 100
-        self.inventory = []
-        self.score = 0
-
-    def move_right(self):
-        if self.x + self.speed < SCREEN_WIDTH - GRID_SIZE:
-            self.x += self.speed
-
-    def move_left(self):
-        if self.x - self.speed >= 0:
-            self.x -= self.speed
-
-    def move_down(self):
-        if self.y + self.speed < SCREEN_HEIGHT - GRID_SIZE:
-            self.y += self.speed
-
-    def move_up(self):
-        if self.y - self.speed >= GRID_SIZE:
-            self.y -= self.speed
-
-    def cast_spell(self):
-        print("Sort lancé !")
-
-    def attack(self, target=None):
-        if target:
-            print(f"Attaque sur {target}")
-        else:
-            print("Attaque générale !")
-
-    def see_enemy(self):
-        return enemy["x"] - self.x < GRID_SIZE * 2  # Simule la détection
-
-    def at_goal(self):
-        return abs(self.x - egg["x"]) < GRID_SIZE and abs(self.y - egg["y"]) < GRID_SIZE
-
-    def collides_with(self, obj):
-        if obj == "ennemi":
-            return abs(self.x - enemy["x"]) < GRID_SIZE and abs(self.y - enemy["y"]) < GRID_SIZE
-        return False
-
-    def place_item(self):
-        print("Objet placé")
-
-    def ready(self):
-        return self.health > 0
-
-    def add_item(self, item):
-        self.inventory.append(item)
-
-    def draw(self):
-        pygame.draw.rect(screen, YELLOW, (self.x, self.y, GRID_SIZE, GRID_SIZE))
-
-# Initialisation de l'écran
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("PyChuckie")
-
-# Objets du jeu
-hero = None
-egg = None
-enemy = None
-platform = None
-
-# Fonction pour réinitialiser le niveau
-def reset_level(level_num):
-    global hero, egg, enemy, platform, level_completed
-    level_completed = False
-    hero = Hero(GRID_SIZE, SCREEN_HEIGHT - GRID_SIZE * 2)
-    if level_num <= 5:
-        egg = {"x": GRID_SIZE * 5, "y": SCREEN_HEIGHT - GRID_SIZE * 2}
-    elif level_num <= 10:
-        egg = {"x": GRID_SIZE * 3, "y": SCREEN_HEIGHT - GRID_SIZE * 4}
-    else:
-        egg = {"x": GRID_SIZE * 7, "y": SCREEN_HEIGHT - GRID_SIZE * 3}
-    enemy = {"x": GRID_SIZE * 7, "y": SCREEN_HEIGHT - GRID_SIZE * 2}
-    platform = {"x": 0, "y": SCREEN_HEIGHT - GRID_SIZE, "width": SCREEN_WIDTH, "height": GRID_SIZE}
-
-reset_level(1)
-
-# Fonction de configuration
-def setup():
-    screen.fill(BLACK)
-
-# Boucle de mise à jour
-def update_loop():
-    global level_completed
-    screen.fill(BLACK)
-    pygame.draw.rect(screen, GREEN, (platform["x"], platform["y"], platform["width"], platform["height"]))
-    pygame.draw.circle(screen, BLUE, (egg["x"] + GRID_SIZE // 2, egg["y"] + GRID_SIZE // 2), GRID_SIZE // 2)
-    pygame.draw.rect(screen, RED, (enemy["x"], enemy["y"], GRID_SIZE, GRID_SIZE))
-    hero.draw()
-    if hero.at_goal():
-        level_completed = True
-        print("Œuf collecté ! Niveau terminé.")
-    pygame.display.flip()
-
-# Fonction pour exécuter le code de l'élève
-def run_student_code(code):
-    global level_completed
-    try:
-        level_completed = False
-        exec(code, globals())
-        return "Code exécuté avec succès !" if level_completed else "Objectif non atteint. Essayez encore."
-    except Exception as e:
-        return f"Erreur : {str(e)}"
-
-# Boucle principale
-async def main():
-    setup()
-    while True:
-        update_loop()
-        await asyncio.sleep(1.0 / FPS)
-
-if platform.system() == "Emscripten":
-    asyncio.ensure_future(main())
-else:
-    if __name__ == "__main__":
-        asyncio.run(main())
-            `;
-
-            // Exécuter le code du jeu
-            pyodide.runPython(gameCode);
-
-            // Fonction pour exécuter le code de l'utilisateur
-            window.runUserCode = function() {
-                let userCode = document.getElementById('code-editor').value;
-                let result = pyodide.runPython(`
-result = run_student_code("""${userCode}""")
-result
-                `);
-                document.getElementById('output').innerText = result;
-            };
-
-            // Fonction pour réinitialiser le niveau
-            window.resetLevel = function(levelNum) {
-                pyodide.runPython(`reset_level(${levelNum})`);
-            };
-
-            // Instructions par niveau
-            const instructions = {
-                1: "<h3>Niveau 1 - Mouvement de Base</h3><p><strong>Objectif :</strong> Déplacez le héros (jaune) pour collecter l'œuf (bleu).</p><p><strong>Concept :</strong> Utiliser des fonctions simples.</p><p><strong>Exemple :</strong></p><pre>hero.move_right()</pre><p><strong>Défi :</strong> Déplacez le héros 4 fois vers la droite pour atteindre l'œuf.</p>",
-                2: "<h3>Niveau 2 - Variables</h3><p><strong>Objectif :</strong> Utiliser une variable pour déplacer le héros.</p><p><strong>Concept :</strong> Créer et utiliser des variables.</p><p><strong>Exemple :</strong></p><pre>pas = 2\nfor i in range(pas):\n    hero.move_right()</pre><p><strong>Défi :</strong> Utilisez une variable pour déplacer le héros 4 fois.</p>",
-                3: "<h3>Niveau 3 - Conditions</h3><p><strong>Objectif :</strong> Utiliser une condition pour lancer un sort si un ennemi est proche.</p><p><strong>Concept :</strong> Conditions if/else.</p><p><strong>Exemple :</strong></p><pre>if hero.see_enemy():\n    hero.cast_spell()\nelse:\n    hero.move_right()</pre><p><strong>Défi :</strong> Déplacez le héros vers l'œuf, mais lancez un sort si un ennemi est détecté.</p>",
-                4: "<h3>Niveau 4 - Boucles While</h3><p><strong>Objectif :</strong> Utiliser une boucle while pour atteindre l'œuf.</p><p><strong>Concept :</strong> Boucles while.</p><p><strong>Exemple :</strong></p><pre>while not hero.at_goal():\n    hero.move_right()</pre><p><strong>Défi :</strong> Utilisez while pour déplacer le héros jusqu'à l'œuf.</p>",
-                5: "<h3>Niveau 5 - Boucles For</h3><p><strong>Objectif :</strong> Répéter un mouvement avec une boucle for.</p><p><strong>Concept :</strong> Boucles for.</p><p><strong>Exemple :</strong></p><pre>for i in range(3):\n    hero.move_right()</pre><p><strong>Défi :</strong> Déplacez le héros 4 fois vers la droite avec for.</p>",
-                6: "<h3>Niveau 6 - Boucles Imbriquées</h3><p><strong>Objectif :</strong> Créer un motif avec des boucles imbriquées.</p><p><strong>Exemple :</strong></p><pre>for ligne in range(2):\n    for colonne in range(2):\n        hero.move_right()\n    hero.move_down()</pre><p><strong>Défi :</strong> Créez un motif pour atteindre l'œuf.</p>",
-                7: "<h3>Niveau 7 - Fonctions Simples</h3><p><strong>Objectif :</strong> Définir une fonction pour déplacer le héros.</p><p><strong>Exemple :</strong></p><pre>def avancer():\n    hero.move_right()\navancer()</pre><p><strong>Défi :</strong> Créez une fonction pour avancer 4 fois et atteindre l'œuf.</p>",
-                8: "<h3>Niveau 8 - Fonctions avec Paramètres</h3><p><strong>Objectif :</strong> Utiliser des paramètres dans une fonction.</p><p><strong>Exemple :</strong></p><pre>def avancer(n):\n    for i in range(n):\n        hero.move_right()\navancer(2)</pre><p><strong>Défi :</strong> Créez une fonction pour déplacer le héros n fois et atteignez l'œuf.</p>",
-                9: "<h3>Niveau 9 - Listes</h3><p><strong>Objectif :</strong> Gérer une liste d'objets.</p><p><strong>Exemple :</strong></p><pre>objets = ['clé', 'épée']\nhero.add_item(objets[0])\nprint(hero.inventory)</pre><p><strong>Défi :</strong> Ajoutez 2 objets à l'inventaire, puis atteignez l'œuf.</p>",
-                10: "<h3>Niveau 10 - Dictionnaires</h3><p><strong>Objectif :</strong> Utiliser un dictionnaire pour les stats.</p><p><strong>Exemple :</strong></p><pre>joueur = {'nom': 'Alex', 'score': 20}\nprint(joueur['nom'])</pre><p><strong>Défi :</strong> Créez un dictionnaire pour le héros, modifiez son score, et atteignez l'œuf.</p>",
-                11: "<h3>Niveau 11 - Entrées Clavier</h3><p><strong>Objectif :</strong> Simuler une entrée clavier.</p><p><strong>Exemple :</strong></p><pre>direction = 'right'\nif direction == 'right':\n    hero.move_right()\nelse:\n    hero.move_left()</pre><p><strong>Défi :</strong> Déplacez le héros vers l'œuf selon une variable direction.</p>",
-                12: "<h3>Niveau 12 - Conditions Composées</h3><p><strong>Objectif :</strong> Combiner des conditions.</p><p><strong>Exemple :</strong></p><pre>if hero.health > 0 and hero.x < 200:\n    hero.move_right()</pre><p><strong>Défi :</strong> Ajoutez une condition composée pour bouger vers l'œuf.</p>",
-                13: "<h3>Niveau 13 - Collisions</h3><p><strong>Objectif :</strong> Détecter une collision.</p><p><strong>Exemple :</strong></p><pre>if hero.collides_with('ennemi'):\n    hero.health -= 10\nelse:\n    hero.move_right()</pre><p><strong>Défi :</strong> Évitez l'ennemi pour atteindre l'œuf.</p>",
-                14: "<h3>Niveau 14 - Tests</h3><p><strong>Objectif :</strong> Tester le code.</p><p><strong>Exemple :</strong></p><pre>assert hero.ready()\nhero.move_right()</pre><p><strong>Défi :</strong> Ajoutez un test avant de bouger vers l'œuf.</p>",
-                15: "<h3>Niveau 15 - Gestion des Erreurs</h3><p><strong>Objectif :</strong> Gérer une erreur.</p><p><strong>Exemple :</strong></p><pre>try:\n    hero.attack()\nexcept:\n    print('Erreur')\nhero.move_right()</pre><p><strong>Défi :</strong> Protégez un déplacement vers l'œuf.</p>",
-                16: "<h3>Niveau 16 - Indentation</h3><p><strong>Objectif :</strong> Comprendre l'indentation.</p><p><strong>Exemple :</strong></p><pre>if True:\n    hero.move_right()\n    hero.move_down()</pre><p><strong>Défi :</strong> Corrigez une indentation erronée pour atteindre l'œuf.</p>",
-                17: "<h3>Niveau 17 - Classes</h3><p><strong>Objectif :</strong> Créer une classe.</p><p><strong>Exemple :</strong></p><pre>class Ennemi:\n    def __init__(self):\n        self.hp = 50\nennemi = Ennemi()</pre><p><strong>Défi :</strong> Créez une classe Item, puis atteignez l'œuf.</p>",
-                18: "<h3>Niveau 18 - Collaboration</h3><p><strong>Objectif :</strong> Simuler un travail à deux.</p><p><strong>Exemple :</strong></p><pre>def bouger():\n    hero.move_right()\n# Test\nbouger()</pre><p><strong>Défi :</strong> Créez et testez une fonction pour atteindre l'œuf.</p>",
-                19: "<h3>Niveau 19 - Optimisation</h3><p><strong>Objectif :</strong> Optimiser le code.</p><p><strong>Exemple :</strong></p><pre>for i in range(3):\n    hero.move_right()</pre><p><strong>Défi :</strong> Remplacez 5 lignes par une boucle pour atteindre l'œuf.</p>",
-                20: "<h3>Niveau 20 - Stratégies Complexes</h3><p><strong>Objectif :</strong> Combiner plusieurs concepts.</p><p><strong>Exemple :</strong></p><pre>def combat():\n    if hero.collides_with('ennemi'):\n        for i in range(2):\n            hero.attack('ennemi')\n    else:\n        hero.move_right()\ncombat()</pre><p><strong>Défi :</strong> Créez une stratégie complexe pour atteindre l'œuf.</p>",
-                21: "<h3>Niveau 21 - Plusieurs Fichiers</h3><p><strong>Objectif :</strong> Simuler plusieurs fichiers.</p><p><strong>Exemple :</strong></p><pre>def util_avancer():\n    hero.move_right()\nutil_avancer()</pre><p><strong>Défi :</strong> Créez une fonction utilitaire pour atteindre l'œuf.</p>",
-                22: "<h3>Niveau 22 - Documentation</h3><p><strong>Objectif :</strong> Documenter le code.</p><p><strong>Exemple :</strong></p><pre>'''Déplace le héros à droite'''\ndef avancer():\n    hero.move_right()\navancer()</pre><p><strong>Défi :</strong> Documentez une fonction pour atteindre l'œuf.</p>",
-                23: "<h3>Niveau 23 - Créer un Niveau</h3><p><strong>Objectif :</strong> Personnaliser un niveau.</p><p><strong>Exemple :</strong></p><pre>egg['x'] = GRID_SIZE * 3\nhero.move_right()</pre><p><strong>Défi :</strong> Placez l'œuf à GRID_SIZE * 5 et atteignez-le.</p>",
-                24: "<h3>Niveau 24 - Sécurité</h3><p><strong>Objectif :</strong> Sensibiliser à la sécurité.</p><p><strong>Exemple :</strong></p><pre># Ne partagez pas ce code\nhero.score += 10\nhero.move_right()</pre><p><strong>Défi :</strong> Ajoutez un commentaire de sécurité et atteignez l'œuf.</p>",
-                25: "<h3>Niveau 25 - Projet Final</h3><p><strong>Objectif :</strong> Créer un projet complet.</p><p><strong>Exemple :</strong></p><pre>def jeu():\n    for i in range(3):\n        if not hero.collides_with('ennemi'):\n            hero.move_right()\n        else:\n            hero.cast_spell()\njeu()</pre><p><strong>Défi :</strong> Créez un mini-jeu pour atteindre l'œuf en évitant l'ennemi.</p>"
-            };
-
-            // Mettre à jour les instructions en fonction du niveau
-            function updateInstructions() {
-                const level = document.getElementById('level-selector').value;
-                document.getElementById('instructions').innerHTML = instructions[level];
-                document.getElementById('code-editor').value = '';
-                document.getElementById('output').innerText = 'Les résultats et messages apparaîtront ici.';
-                window.resetLevel(level);
-            }
-
-            // Initialiser les instructions
-            updateInstructions();
-
-            // Écouter les changements de niveau
-            document.getElementById('level-selector').addEventListener('change', updateInstructions);
-
-            // Écouter le bouton d'exécution
-            document.getElementById('run-button').addEventListener('click', function() {
-                window.runUserCode();
-            });
-        }
-
-        loadPyodideAndRunGame();
-    </script>
+  <!-- Charge la logique de l'application. -->
+  <script src="main.js"></script>
 </body>
 </html>
