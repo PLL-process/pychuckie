@@ -44,10 +44,10 @@ const levels = [
     hint: "Joue d'abord avec les flèches, puis reproduis ton trajet avec tolkaze.move_right().",
     start: { x: 1, y: 8 },
     eggs: [{ x: 5, y: 8 }, { x: 9, y: 8 }, { x: 13, y: 8 }],
-    ostriches: [{ x: 11, y: 8, dir: -1 }],
+    ostriches: [{ x: 11, y: 8, dir: -1, minX: 10, maxX: 14 }],
     ladders: [],
     platforms: [{ x: 0, y: 9, w: 16, h: 1 }],
-    starterCode: "# Objectif : récupérer les œufs.\n# Écris les actions de Tolkaze ci-dessous.\n\ntolkaze.move_right()\ntolkaze.move_right()\ntolkaze.move_right()\ntolkaze.move_right()\n"
+    starterCode: "# Objectif : récupérer les œufs.\n# Écris les actions de Tolkaze ci-dessous.\n\nfor i in range(12):\n    tolkaze.move_right()\n"
   },
   {
     id: 2,
@@ -57,7 +57,7 @@ const levels = [
     hint: "Une boucle for évite de répéter plusieurs fois la même ligne.",
     start: { x: 1, y: 8 },
     eggs: [{ x: 4, y: 8 }, { x: 8, y: 8 }, { x: 12, y: 8 }],
-    ostriches: [{ x: 14, y: 8, dir: -1 }],
+    ostriches: [{ x: 14, y: 8, dir: -1, minX: 11, maxX: 15 }],
     ladders: [],
     platforms: [{ x: 0, y: 9, w: 16, h: 1 }],
     starterCode: "# Utilise une boucle pour avancer plusieurs fois.\n\nfor i in range(11):\n    tolkaze.move_right()\n"
@@ -70,10 +70,23 @@ const levels = [
     hint: "Utilise tolkaze.climb_up() quand Tolkaze est sur une échelle.",
     start: { x: 2, y: 8 },
     eggs: [{ x: 2, y: 5 }, { x: 8, y: 5 }, { x: 12, y: 8 }],
-    ostriches: [{ x: 10, y: 8, dir: 1 }],
+    ostriches: [{ x: 10, y: 8, dir: 1, minX: 9, maxX: 14 }],
     ladders: [{ x: 2, y1: 5, y2: 8 }, { x: 8, y1: 5, y2: 8 }],
     platforms: [{ x: 0, y: 9, w: 16, h: 1 }, { x: 2, y: 6, w: 8, h: 1 }],
     starterCode: "# Monte à l'échelle, puis avance.\n\nfor i in range(3):\n    tolkaze.climb_up()\n"
+  },
+  {
+    id: 4,
+    title: "Niveau 4 — Décider avec if",
+    concept: "Condition if et observation du danger",
+    goal: "Avancer seulement si aucune autruche n'est proche.",
+    hint: "Teste tolkaze.see_ostrich() avant d'avancer.",
+    start: { x: 1, y: 8 },
+    eggs: [{ x: 4, y: 8 }, { x: 7, y: 8 }, { x: 10, y: 8 }],
+    ostriches: [{ x: 12, y: 8, dir: -1, minX: 8, maxX: 13 }],
+    ladders: [],
+    platforms: [{ x: 0, y: 9, w: 16, h: 1 }],
+    starterCode: "# Observe le danger avant d'avancer.\n\nif not tolkaze.see_ostrich():\n    tolkaze.move_right()\n"
   }
 ];
 
@@ -83,9 +96,23 @@ let currentLevel = levels[0];
 // Stocke l'état courant du jeu.
 let state = null;
 
+// Stocke l'identifiant du minuteur qui anime les autruches.
+let ostrichTimer = null;
+
 // Copie une position afin d'éviter de modifier le modèle du niveau.
 function copyPos(pos) {
   return { x: pos.x, y: pos.y };
+}
+
+// Copie une autruche avec ses limites de patrouille.
+function copyOstrich(ostrich) {
+  return {
+    x: ostrich.x,
+    y: ostrich.y,
+    dir: ostrich.dir,
+    minX: ostrich.minX ?? 0,
+    maxX: ostrich.maxX ?? 15
+  };
 }
 
 // Réinitialise le niveau actuel.
@@ -93,9 +120,10 @@ function resetGame() {
   state = {
     tolkaze: copyPos(currentLevel.start),
     eggs: currentLevel.eggs.map(copyPos),
-    ostriches: currentLevel.ostriches.map(o => ({ x: o.x, y: o.y, dir: o.dir })),
+    ostriches: currentLevel.ostriches.map(copyOstrich),
     collected: 0,
     status: "playing",
+    mode: "play",
     message: "Mode Jouer : utilise les flèches pour explorer le niveau."
   };
   codeEditor.value = currentLevel.starterCode;
@@ -140,6 +168,35 @@ function checkOstrichCollision() {
   }
 }
 
+// Vérifie si une autruche est proche de Tolkaze.
+function seeOstrich() {
+  return state.ostriches.some(o => o.y === state.tolkaze.y && Math.abs(o.x - state.tolkaze.x) <= 2);
+}
+
+// Retourne le nombre d'œufs restants.
+function eggsLeft() {
+  return state.eggs.length;
+}
+
+// Retourne la position de Tolkaze sous forme de texte.
+function tolkazePosition() {
+  return `x=${state.tolkaze.x}, y=${state.tolkaze.y}`;
+}
+
+// Déplace toutes les autruches d'une case pendant leur patrouille.
+function stepOstriches() {
+  if (!state || state.status !== "playing") return;
+  state.ostriches.forEach(o => {
+    const nextX = o.x + o.dir;
+    if (nextX < o.minX || nextX > o.maxX) {
+      o.dir *= -1;
+    }
+    o.x += o.dir;
+  });
+  checkOstrichCollision();
+  drawGame();
+}
+
 // Déplace Tolkaze dans la grille du jeu.
 function moveTolkaze(dx, dy) {
   if (state.status !== "playing") return;
@@ -152,6 +209,7 @@ function moveTolkaze(dx, dy) {
   state.tolkaze.y = ny;
   collectEggs();
   checkOstrichCollision();
+  if (state.mode === "program") stepOstriches();
   drawGame();
 }
 
@@ -166,6 +224,24 @@ function jumpTolkaze() {
 function drawTile(x, y, color) {
   ctx.fillStyle = color;
   ctx.fillRect(x * TILE, y * TILE, TILE, TILE);
+}
+
+// Dessine Tolkaze avec une forme temporaire lisible.
+function drawTolkaze() {
+  ctx.fillStyle = "#38bdf8";
+  ctx.fillRect(state.tolkaze.x * TILE + 6, state.tolkaze.y * TILE + 6, 28, 28);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillText("T", state.tolkaze.x * TILE + 15, state.tolkaze.y * TILE + 25);
+}
+
+// Dessine une autruche temporaire en attendant les sprites définitifs.
+function drawOstrich(o) {
+  ctx.fillStyle = "#fb7185";
+  ctx.beginPath();
+  ctx.arc(o.x * TILE + 20, o.y * TILE + 20, 16, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#111827";
+  ctx.fillText("O", o.x * TILE + 15, o.y * TILE + 25);
 }
 
 // Dessine tout le niveau.
@@ -189,20 +265,11 @@ function drawGame() {
     ctx.ellipse(egg.x * TILE + 20, egg.y * TILE + 22, 11, 15, 0, 0, Math.PI * 2);
     ctx.fill();
   });
-  state.ostriches.forEach(o => {
-    ctx.fillStyle = "#fb7185";
-    ctx.beginPath();
-    ctx.arc(o.x * TILE + 20, o.y * TILE + 20, 16, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = "#111827";
-    ctx.fillText("O", o.x * TILE + 15, o.y * TILE + 25);
-  });
-  ctx.fillStyle = "#38bdf8";
-  ctx.fillRect(state.tolkaze.x * TILE + 6, state.tolkaze.y * TILE + 6, 28, 28);
-  ctx.fillStyle = "#ffffff";
-  ctx.fillText("T", state.tolkaze.x * TILE + 15, state.tolkaze.y * TILE + 25);
+  state.ostriches.forEach(drawOstrich);
+  drawTolkaze();
   ctx.fillStyle = "#f8fafc";
   ctx.fillText(`Œufs : ${state.collected}/${currentLevel.eggs.length}`, 10, 20);
+  ctx.fillText(`Position : ${tolkazePosition()}`, 10, 38);
   ctx.fillText(state.message, 10, 390);
 }
 
@@ -214,7 +281,7 @@ function updateMission() {
     <p><strong>Notion Python :</strong> ${currentLevel.concept}</p>
     <p><strong>Objectif :</strong> ${currentLevel.goal}</p>
     <p><strong>Commandes clavier :</strong> flèches pour se déplacer, espace pour sauter.</p>
-    <p><strong>Commandes Python :</strong> <code>tolkaze.move_right()</code>, <code>tolkaze.move_left()</code>, <code>tolkaze.climb_up()</code>, <code>tolkaze.climb_down()</code>, <code>tolkaze.jump()</code></p>
+    <p><strong>Commandes Python :</strong> <code>tolkaze.move_right()</code>, <code>tolkaze.move_left()</code>, <code>tolkaze.climb_up()</code>, <code>tolkaze.climb_down()</code>, <code>tolkaze.jump()</code>, <code>tolkaze.see_ostrich()</code>, <code>tolkaze.eggs_left()</code></p>
   `;
 }
 
@@ -236,6 +303,9 @@ function exposeGameCommandsToWindow() {
   window.js_climb_up = () => moveTolkaze(0, -1);
   window.js_climb_down = () => moveTolkaze(0, 1);
   window.js_jump = () => jumpTolkaze();
+  window.js_see_ostrich = () => seeOstrich();
+  window.js_eggs_left = () => eggsLeft();
+  window.js_position = () => tolkazePosition();
 }
 
 // Charge Pyodide et prépare les commandes accessibles depuis Python.
@@ -255,6 +325,7 @@ async function runPythonCode() {
   }
   const studentCode = codeEditor.value;
   resetGame();
+  state.mode = "program";
   codeEditor.value = studentCode;
   const bridgeCode = `
 from js import window
@@ -275,6 +346,15 @@ class Tolkaze:
     def jump(self):
         window.js_jump()
 
+    def see_ostrich(self):
+        return bool(window.js_see_ostrich())
+
+    def eggs_left(self):
+        return int(window.js_eggs_left())
+
+    def position(self):
+        return str(window.js_position())
+
 tolkaze = Tolkaze()
 `;
   try {
@@ -286,12 +366,13 @@ tolkaze = Tolkaze()
   } catch (error) {
     output.textContent = "Erreur Python : " + error.message;
   }
+  state.mode = "play";
   drawGame();
 }
 
 // Gère le clavier pour le mode Jouer.
 document.addEventListener("keydown", event => {
-  if (["ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown", "Space"].includes(event.code) || event.code === "Space") event.preventDefault();
+  if (["ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown", "Space"].includes(event.code)) event.preventDefault();
   if (event.key === "ArrowRight") moveTolkaze(1, 0);
   if (event.key === "ArrowLeft") moveTolkaze(-1, 0);
   if (event.key === "ArrowUp") moveTolkaze(0, -1);
@@ -328,3 +409,8 @@ resetGame();
 
 // Lance le chargement de Python.
 initPyodide();
+
+// Anime les autruches automatiquement en mode Jouer.
+ostrichTimer = setInterval(() => {
+  if (state && state.mode === "play" && state.status === "playing") stepOstriches();
+}, 800);
