@@ -21,7 +21,8 @@ const sprites = {
   tolkaze: loadSprite("assets/tolkaze.svg"),
   egg: loadSprite("assets/egg.svg"),
   ostrich: loadSprite("assets/ostrich.svg"),
-  ladder: loadSprite("assets/ladder.svg")
+  ladder: loadSprite("assets/ladder.svg"),
+  platform: loadSprite("assets/platform.svg")
 };
 
 // Fonction utilitaire pour charger une image.
@@ -32,7 +33,7 @@ function loadSprite(src) {
   return image;
 }
 
-// Niveaux pédagogiques du prototype.
+// Niveaux pedagogiques du prototype.
 const levels = [
   {
     id: 1,
@@ -84,7 +85,33 @@ const levels = [
     ostriches: [{ x: 12, y: 8, dir: -1, minX: 8, maxX: 13 }],
     ladders: [],
     platforms: [{ x: 0, y: 9, w: 16, h: 1 }],
-    starterCode: "# Observe le danger avant d'avancer.\n\nif not tolkaze.see_ostrich():\n    tolkaze.move_right()\n"
+    starterCode: "# Observe le danger avant d'avancer.\n\nfor i in range(9):\n    if tolkaze.see_ostrich():\n        tolkaze.wait()\n    else:\n        tolkaze.move_right()\n"
+  },
+  {
+    id: 5,
+    title: "Niveau 5 - Attendre le bon moment",
+    concept: "Attente, rythme du jeu et strategie",
+    goal: "Utiliser wait() pour laisser passer l'autruche.",
+    hint: "Quand une autruche est proche, attendre peut etre plus utile qu'avancer.",
+    start: { x: 1, y: 8 },
+    eggs: [{ x: 3, y: 8 }, { x: 6, y: 8 }, { x: 11, y: 8 }, { x: 14, y: 8 }],
+    ostriches: [{ x: 8, y: 8, dir: -1, minX: 5, maxX: 10 }],
+    ladders: [],
+    platforms: [{ x: 0, y: 9, w: 16, h: 1 }],
+    starterCode: "# Utilise une boucle while avec eggs_left().\n\nwhile tolkaze.eggs_left() > 0:\n    if tolkaze.see_ostrich():\n        tolkaze.wait()\n    else:\n        tolkaze.move_right()\n"
+  },
+  {
+    id: 6,
+    title: "Niveau 6 - Parcours avec echelles",
+    concept: "Combiner boucle, echelle et sequence d'actions",
+    goal: "Recuperer les oeufs sur deux plateformes.",
+    hint: "Monte, avance, puis redescends pour terminer le parcours.",
+    start: { x: 1, y: 8 },
+    eggs: [{ x: 1, y: 5 }, { x: 4, y: 5 }, { x: 9, y: 5 }, { x: 13, y: 8 }],
+    ostriches: [{ x: 11, y: 8, dir: -1, minX: 9, maxX: 14 }],
+    ladders: [{ x: 1, y1: 5, y2: 8 }, { x: 9, y1: 5, y2: 8 }],
+    platforms: [{ x: 0, y: 9, w: 16, h: 1 }, { x: 1, y: 6, w: 9, h: 1 }],
+    starterCode: "# Exemple de trajet : monter, avancer, descendre.\n\nfor i in range(3):\n    tolkaze.climb_up()\nfor i in range(8):\n    tolkaze.move_right()\nfor i in range(3):\n    tolkaze.climb_down()\n"
   }
 ];
 
@@ -110,6 +137,7 @@ function resetGame() {
     eggs: currentLevel.eggs.map(copyPos),
     ostriches: currentLevel.ostriches.map(copyOstrich),
     collected: 0,
+    steps: 0,
     status: "playing",
     mode: "play",
     message: "Mode Jouer : utilise les fleches pour explorer le niveau."
@@ -182,6 +210,15 @@ function stepOstriches() {
   drawGame();
 }
 
+// Fait passer un tour sans bouger Tolkaze.
+function waitTolkaze() {
+  if (state.status !== "playing") return;
+  state.steps += 1;
+  if (state.mode === "program") stepOstriches();
+  state.message = "Tolkaze attend le bon moment.";
+  drawGame();
+}
+
 // Deplace Tolkaze.
 function moveTolkaze(dx, dy) {
   if (state.status !== "playing") return;
@@ -190,6 +227,7 @@ function moveTolkaze(dx, dy) {
   if (dy < 0 && !isOnLadder(state.tolkaze.x, state.tolkaze.y)) return;
   if (dy > 0 && !isOnLadder(state.tolkaze.x, ny)) return;
   if (dy === 0 && !hasGround(nx, state.tolkaze.y) && !isOnLadder(nx, state.tolkaze.y)) return;
+  state.steps += 1;
   state.tolkaze.x = nx;
   state.tolkaze.y = ny;
   collectEggs();
@@ -228,10 +266,7 @@ function drawBackground() {
 
 // Dessine une plateforme retro.
 function drawPlatform(x, y) {
-  ctx.fillStyle = "#475569";
-  ctx.fillRect(x * TILE, y * TILE, TILE, TILE);
-  ctx.fillStyle = "#64748b";
-  ctx.fillRect(x * TILE, y * TILE, TILE, 8);
+  drawSprite(sprites.platform, x, y, "#475569");
 }
 
 // Dessine tout le niveau.
@@ -252,6 +287,7 @@ function drawGame() {
   ctx.font = "12px monospace";
   ctx.fillText(`Oeufs : ${state.collected}/${currentLevel.eggs.length}`, 10, 20);
   ctx.fillText(`Position : ${tolkazePosition()}`, 10, 38);
+  ctx.fillText(`Actions : ${state.steps}`, 10, 56);
   ctx.fillText(state.message, 10, 390);
 }
 
@@ -263,7 +299,7 @@ function updateMission() {
     <p><strong>Notion Python :</strong> ${currentLevel.concept}</p>
     <p><strong>Objectif :</strong> ${currentLevel.goal}</p>
     <p><strong>Commandes clavier :</strong> fleches pour se deplacer, espace pour sauter.</p>
-    <p><strong>Commandes Python :</strong> <code>tolkaze.move_right()</code>, <code>tolkaze.move_left()</code>, <code>tolkaze.climb_up()</code>, <code>tolkaze.climb_down()</code>, <code>tolkaze.jump()</code>, <code>tolkaze.see_ostrich()</code>, <code>tolkaze.eggs_left()</code></p>
+    <p><strong>Commandes Python :</strong> <code>tolkaze.move_right()</code>, <code>tolkaze.move_left()</code>, <code>tolkaze.climb_up()</code>, <code>tolkaze.climb_down()</code>, <code>tolkaze.jump()</code>, <code>tolkaze.wait()</code>, <code>tolkaze.see_ostrich()</code>, <code>tolkaze.eggs_left()</code></p>
   `;
 }
 
@@ -285,6 +321,7 @@ function exposeGameCommandsToWindow() {
   window.js_climb_up = () => moveTolkaze(0, -1);
   window.js_climb_down = () => moveTolkaze(0, 1);
   window.js_jump = () => jumpTolkaze();
+  window.js_wait = () => waitTolkaze();
   window.js_see_ostrich = () => seeOstrich();
   window.js_eggs_left = () => eggsLeft();
   window.js_position = () => tolkazePosition();
@@ -327,6 +364,9 @@ class Tolkaze:
 
     def jump(self):
         window.js_jump()
+
+    def wait(self):
+        window.js_wait()
 
     def see_ostrich(self):
         return bool(window.js_see_ostrich())
