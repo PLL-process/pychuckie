@@ -1,40 +1,40 @@
-// Variable globale qui contiendra le moteur Python Pyodide.
+// Variable globale qui contiendra Pyodide, c'est-à-dire Python dans le navigateur.
 let pyodide = null;
 
-// Variable qui indique si Pyodide est prêt.
+// Variable booléenne qui indique si Python est prêt à exécuter du code.
 let pyodideReady = false;
 
-// Récupère le canvas dans la page HTML.
+// Récupère la zone graphique du jeu.
 const canvas = document.getElementById("gameCanvas");
 
-// Récupère le contexte 2D du canvas pour dessiner le jeu.
+// Prépare le dessin en deux dimensions sur le canvas.
 const ctx = canvas.getContext("2d");
 
-// Récupère le sélecteur de niveau.
+// Récupère la liste déroulante des niveaux.
 const levelSelect = document.getElementById("levelSelect");
 
-// Récupère la zone des consignes.
+// Récupère la zone qui affiche la mission.
 const missionBox = document.getElementById("mission");
 
-// Récupère l'éditeur de code Python.
+// Récupère la zone de saisie du code Python.
 const codeEditor = document.getElementById("codeEditor");
 
 // Récupère la console de sortie.
 const output = document.getElementById("output");
 
-// Récupère le bouton d'exécution.
+// Récupère le bouton qui exécute le code Python.
 const runButton = document.getElementById("runButton");
 
-// Récupère le bouton de réinitialisation.
+// Récupère le bouton qui réinitialise le niveau.
 const resetButton = document.getElementById("resetButton");
 
-// Récupère le bouton d'indice.
+// Récupère le bouton qui affiche un indice.
 const hintButton = document.getElementById("hintButton");
 
 // Définit la taille d'une case du jeu.
 const TILE = 40;
 
-// Définit les niveaux disponibles pour le premier prototype.
+// Définit les premiers niveaux pédagogiques du prototype.
 const levels = [
   {
     id: 1,
@@ -47,7 +47,7 @@ const levels = [
     ostriches: [{ x: 11, y: 8, dir: -1 }],
     ladders: [],
     platforms: [{ x: 0, y: 9, w: 16, h: 1 }],
-    starterCode: "# Objectif : récupérer les œufs.\n# Écris les actions de Tolkaze ci-dessous.\n\ntolkaze.move_right()\ntolkaze.move_right()\n"
+    starterCode: "# Objectif : récupérer les œufs.\n# Écris les actions de Tolkaze ci-dessous.\n\ntolkaze.move_right()\ntolkaze.move_right()\ntolkaze.move_right()\ntolkaze.move_right()\n"
   },
   {
     id: 2,
@@ -60,7 +60,7 @@ const levels = [
     ostriches: [{ x: 14, y: 8, dir: -1 }],
     ladders: [],
     platforms: [{ x: 0, y: 9, w: 16, h: 1 }],
-    starterCode: "# Utilise une boucle pour avancer plusieurs fois.\n\nfor i in range(4):\n    tolkaze.move_right()\n"
+    starterCode: "# Utilise une boucle pour avancer plusieurs fois.\n\nfor i in range(11):\n    tolkaze.move_right()\n"
   },
   {
     id: 3,
@@ -73,22 +73,22 @@ const levels = [
     ostriches: [{ x: 10, y: 8, dir: 1 }],
     ladders: [{ x: 2, y1: 5, y2: 8 }, { x: 8, y1: 5, y2: 8 }],
     platforms: [{ x: 0, y: 9, w: 16, h: 1 }, { x: 2, y: 6, w: 8, h: 1 }],
-    starterCode: "# Monte à l'échelle, puis avance.\n\ntolkaze.climb_up()\ntolkaze.climb_up()\ntolkaze.climb_up()\n"
+    starterCode: "# Monte à l'échelle, puis avance.\n\nfor i in range(3):\n    tolkaze.climb_up()\n"
   }
 ];
 
-// Mémorise le niveau actuel.
+// Stocke le niveau actuellement sélectionné.
 let currentLevel = levels[0];
 
-// Mémorise l'état complet du jeu.
+// Stocke l'état courant du jeu.
 let state = null;
 
-// Fonction qui copie une position sous forme d'objet indépendant.
+// Copie une position afin d'éviter de modifier le modèle du niveau.
 function copyPos(pos) {
   return { x: pos.x, y: pos.y };
 }
 
-// Fonction qui crée ou réinitialise l'état du jeu.
+// Réinitialise le niveau actuel.
 function resetGame() {
   state = {
     tolkaze: copyPos(currentLevel.start),
@@ -103,28 +103,26 @@ function resetGame() {
   drawGame();
 }
 
-// Fonction qui vérifie si une case contient une plateforme sous les pieds.
+// Vérifie si une plateforme se trouve sous la case indiquée.
 function hasGround(x, y) {
   return currentLevel.platforms.some(p => x >= p.x && x < p.x + p.w && y + 1 === p.y);
 }
 
-// Fonction qui vérifie si Tolkaze est sur une échelle.
+// Vérifie si une case appartient à une échelle.
 function isOnLadder(x, y) {
   return currentLevel.ladders.some(l => x === l.x && y >= l.y1 && y <= l.y2);
 }
 
-// Fonction qui limite une valeur dans la zone de jeu.
+// Limite une valeur entre un minimum et un maximum.
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
 }
 
-// Fonction qui récupère les œufs situés sur la position de Tolkaze.
+// Récupère les œufs situés sur la case de Tolkaze.
 function collectEggs() {
   state.eggs = state.eggs.filter(egg => {
     const sameCell = egg.x === state.tolkaze.x && egg.y === state.tolkaze.y;
-    if (sameCell) {
-      state.collected += 1;
-    }
+    if (sameCell) state.collected += 1;
     return !sameCell;
   });
   if (state.eggs.length === 0) {
@@ -133,7 +131,7 @@ function collectEggs() {
   }
 }
 
-// Fonction qui vérifie les collisions avec les autruches.
+// Vérifie si Tolkaze touche une autruche.
 function checkOstrichCollision() {
   const touched = state.ostriches.some(o => o.x === state.tolkaze.x && o.y === state.tolkaze.y);
   if (touched) {
@@ -142,7 +140,7 @@ function checkOstrichCollision() {
   }
 }
 
-// Fonction qui déplace Tolkaze d'une case.
+// Déplace Tolkaze dans la grille du jeu.
 function moveTolkaze(dx, dy) {
   if (state.status !== "playing") return;
   const nx = clamp(state.tolkaze.x + dx, 0, 15);
@@ -157,20 +155,20 @@ function moveTolkaze(dx, dy) {
   drawGame();
 }
 
-// Fonction qui fait sauter Tolkaze.
+// Fait sauter Tolkaze d'une case puis le fait redescendre.
 function jumpTolkaze() {
   if (state.status !== "playing") return;
   moveTolkaze(0, -1);
   setTimeout(() => moveTolkaze(0, 1), 180);
 }
 
-// Fonction qui dessine une case.
+// Dessine une case colorée sur le canvas.
 function drawTile(x, y, color) {
   ctx.fillStyle = color;
   ctx.fillRect(x * TILE, y * TILE, TILE, TILE);
 }
 
-// Fonction qui dessine tout le jeu.
+// Dessine tout le niveau.
 function drawGame() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "#020617";
@@ -208,7 +206,7 @@ function drawGame() {
   ctx.fillText(state.message, 10, 390);
 }
 
-// Fonction qui met à jour la consigne affichée.
+// Met à jour la fiche de mission affichée à gauche.
 function updateMission() {
   missionBox.innerHTML = `
     <h2>${currentLevel.title}</h2>
@@ -220,7 +218,7 @@ function updateMission() {
   `;
 }
 
-// Fonction qui remplit la liste des niveaux.
+// Remplit automatiquement la liste des niveaux.
 function populateLevels() {
   levelSelect.innerHTML = "";
   levels.forEach(level => {
@@ -231,65 +229,69 @@ function populateLevels() {
   });
 }
 
-// Fonction qui charge Pyodide.
+// Expose les commandes JavaScript dans window pour que Pyodide puisse les appeler.
+function exposeGameCommandsToWindow() {
+  window.js_move_right = () => moveTolkaze(1, 0);
+  window.js_move_left = () => moveTolkaze(-1, 0);
+  window.js_climb_up = () => moveTolkaze(0, -1);
+  window.js_climb_down = () => moveTolkaze(0, 1);
+  window.js_jump = () => jumpTolkaze();
+}
+
+// Charge Pyodide et prépare les commandes accessibles depuis Python.
 async function initPyodide() {
   output.textContent = "Chargement de Python dans le navigateur...";
+  exposeGameCommandsToWindow();
   pyodide = await loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.29.0/full/" });
-  pyodide.globals.set("js_move_right", () => moveTolkaze(1, 0));
-  pyodide.globals.set("js_move_left", () => moveTolkaze(-1, 0));
-  pyodide.globals.set("js_climb_up", () => moveTolkaze(0, -1));
-  pyodide.globals.set("js_climb_down", () => moveTolkaze(0, 1));
-  pyodide.globals.set("js_jump", () => jumpTolkaze());
   pyodideReady = true;
   output.textContent = "Python est prêt. Tu peux jouer, puis programmer Tolkaze.";
 }
 
-// Fonction qui exécute le code Python de l'élève.
+// Exécute le code Python de l'élève.
 async function runPythonCode() {
   if (!pyodideReady) {
     output.textContent = "Python n'est pas encore chargé.";
     return;
   }
+  const studentCode = codeEditor.value;
   resetGame();
+  codeEditor.value = studentCode;
   const bridgeCode = `
-from js import js_move_right, js_move_left, js_climb_up, js_climb_down, js_jump
+from js import window
 
 class Tolkaze:
     def move_right(self):
-        js_move_right()
+        window.js_move_right()
 
     def move_left(self):
-        js_move_left()
+        window.js_move_left()
 
     def climb_up(self):
-        js_climb_up()
+        window.js_climb_up()
 
     def climb_down(self):
-        js_climb_down()
+        window.js_climb_down()
 
     def jump(self):
-        js_jump()
+        window.js_jump()
 
 tolkaze = Tolkaze()
 `;
   try {
     output.textContent = "Exécution du programme...";
-    await pyodide.runPythonAsync(bridgeCode + "\n" + codeEditor.value);
-    if (state.status === "success") {
-      output.textContent = "✅ Bravo : programme validé. Les œufs ont été récupérés.";
-    } else if (state.status === "failed") {
-      output.textContent = "❌ Programme à corriger : Tolkaze a été touché.";
-    } else {
-      output.textContent = "⚠️ Programme exécuté, mais la mission n'est pas encore terminée.";
-    }
+    await pyodide.runPythonAsync(bridgeCode + "\n" + studentCode);
+    if (state.status === "success") output.textContent = "✅ Bravo : programme validé. Les œufs ont été récupérés.";
+    else if (state.status === "failed") output.textContent = "❌ Programme à corriger : Tolkaze a été touché.";
+    else output.textContent = "⚠️ Programme exécuté, mais la mission n'est pas encore terminée.";
   } catch (error) {
     output.textContent = "Erreur Python : " + error.message;
   }
   drawGame();
 }
 
-// Écoute les touches du clavier pour le mode Jouer.
+// Gère le clavier pour le mode Jouer.
 document.addEventListener("keydown", event => {
+  if (["ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown", "Space"].includes(event.code) || event.code === "Space") event.preventDefault();
   if (event.key === "ArrowRight") moveTolkaze(1, 0);
   if (event.key === "ArrowLeft") moveTolkaze(-1, 0);
   if (event.key === "ArrowUp") moveTolkaze(0, -1);
@@ -297,7 +299,7 @@ document.addEventListener("keydown", event => {
   if (event.code === "Space") jumpTolkaze();
 });
 
-// Change le niveau quand l'élève choisit une autre mission.
+// Change de niveau quand l'élève utilise la liste déroulante.
 levelSelect.addEventListener("change", () => {
   currentLevel = levels.find(level => String(level.id) === levelSelect.value);
   updateMission();
@@ -310,19 +312,19 @@ runButton.addEventListener("click", runPythonCode);
 // Réinitialise le niveau quand l'élève clique sur le bouton.
 resetButton.addEventListener("click", resetGame);
 
-// Affiche l'indice du niveau.
+// Affiche l'indice du niveau actuel.
 hintButton.addEventListener("click", () => {
   output.textContent = "Indice : " + currentLevel.hint;
 });
 
-// Initialise l'application.
+// Prépare la liste des niveaux.
 populateLevels();
 
-// Affiche la mission du premier niveau.
+// Affiche la première mission.
 updateMission();
 
-// Réinitialise le jeu au chargement.
+// Réinitialise le premier niveau.
 resetGame();
 
-// Charge Python avec Pyodide.
+// Lance le chargement de Python.
 initPyodide();
